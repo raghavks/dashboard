@@ -9,8 +9,8 @@ def read_json():
     description:read sms json data from file
     :return: json data
     """
-    jsonfolder=open('Ele_CC_Raghavendra/static/json/SMSBackUp.json','r',encoding='utf-8')
-    content=jsonfolder.read()
+    jsonfolder = open('Ele_CC_Raghavendra/static/json/SMSBackUp.json', 'r',encoding = 'utf-8')
+    content = jsonfolder.read()
     content = json.loads(content)
     jsonfolder.close()
     return content
