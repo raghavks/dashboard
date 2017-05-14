@@ -118,5 +118,3 @@ def service_sms_type():
         allresult.append([res_dict, status_global])
 
     return allresult
-if __name__ == '__main__':
-    print(read_json())
