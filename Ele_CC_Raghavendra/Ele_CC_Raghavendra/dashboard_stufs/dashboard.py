@@ -9,9 +9,12 @@ def read_json():
     description:read sms json data from file
     :return: json data
     """
-    with open('Ele_CC_Raghavendra/static/json/SMSBackUp.json') as jsonfolder:
-        content = json.load(jsonfolder)
-        return content
+    jsonfolder=open('Ele_CC_Raghavendra/static/json/SMSBackUp.json','r',encoding='utf-8')
+    # with open('E:\dashboard\Ele_CC_Raghavendra\Ele_CC_Raghavendra\static\json\SMSBackUp.json') as jsonfolder:
+    content=jsonfolder.read()
+    content = json.loads(content)
+    jsonfolder.close()
+    return content
 
 
 def distinct_number():
@@ -115,3 +118,5 @@ def service_sms_type():
         allresult.append([res_dict, status_global])
 
     return allresult
+if __name__ == '__main__':
+    print(read_json())
