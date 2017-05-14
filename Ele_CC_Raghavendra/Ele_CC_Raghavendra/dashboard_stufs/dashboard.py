@@ -10,7 +10,6 @@ def read_json():
     :return: json data
     """
     jsonfolder=open('Ele_CC_Raghavendra/static/json/SMSBackUp.json','r',encoding='utf-8')
-    # with open('E:\dashboard\Ele_CC_Raghavendra\Ele_CC_Raghavendra\static\json\SMSBackUp.json') as jsonfolder:
     content=jsonfolder.read()
     content = json.loads(content)
     jsonfolder.close()
