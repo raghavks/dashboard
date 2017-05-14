@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8" />
+    <title>Simple SMS Dashboard Template | PrepBootstrap</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css" />
+    <style>
+    .topcorner{
+   position:absolute;
+   top:0;
+   left:0;
+  }
+    </style>
+    <script type="text/javascript" src="/static/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+<link href="/static/css/grayscale.min.css" rel="stylesheet">
+<div class="intro">
+
+<a class="topcorner" href="home"><img src="/static/img/home-icon.png" width="100" height="100" border="0"/></a>
+
+<div class="page-header">
+    <h1>Simple SMS Analysis Dashboard</h1>
+</div>
+
+<!-- Simple Dashboard - START -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3>SMS Analysis</h3>
+                </div>
+                <div class="panel-body">
+                    <div id="quarterChart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3>Details per SMS</h3>
+                </div>
+                <div id="detailChart" class="panel-body">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- you need to include the shieldui css and js assets in order for the charts to work -->
+<link rel="stylesheet" type="text/css" href="http://www.shieldui.com/shared/components/latest/css/light/all.min.css" />
+<script type="text/javascript" src="http://www.shieldui.com/shared/components/latest/js/shieldui-all.min.js"></script>
+
+<script type="text/javascript">
+            jQuery(function($) {
+            $(document).ready(function(){
+    var data = $.parseJSON($.ajax({
+        url:  '/dashboard',
+        dataType: "json",
+        async: false
+    }).responseText);
+
+                var performanceData = data['request']
+                console.log(data)
+
+
+                $(function() {
+                    $("#quarterChart").shieldChart({
+                        exportOptions: {
+                            image: false,
+                            print: false
+                        },
+                        seriesSettings: {
+                            rangebar: {
+                                enablePointSelection: true
+                            }
+                        },
+                        tooltipSettings: {
+                            customPointText: (performanceData, function(item, index) {
+                                console.log("item dd:", performanceData[item.pointName][1][0][0].Val, "\nindex :", item.pointName);
+                                return "<span><b>Number :</b>" + performanceData[item.pointName][0].Number + " | <b>Promotional :</b>" + performanceData[item.pointName][0].Promotional + " | <b>Type :</b>" + performanceData[item.pointName][0].Type + " | <b>TxSMS :</b>" + performanceData[item.pointName][0].TxSMS + " | <b>Total_SMS :</b>" + performanceData[item.pointName][0].Total_SMS + "</span>";
+                            })
+                        },
+
+                        axisY: {
+                            title: {
+                                text: "Number of SMS"
+                            }
+                        },
+                        primaryHeader: {
+                            text: "Dashboard"
+                        },
+                        dataSeries: [{
+                            seriesType: "rangebar",
+                            collectionAlias: "Number",
+                            data: $.map(performanceData, function(item, index) {
+                                return [
+                                    [0, item[0].Total_SMS]
+                                ];
+                            })
+                        }],
+                        events: {
+                            pointSelect: function(args) {
+                                console.log("nnnnnnnnnnn", performanceData[args.point.x][1]["0"])
+                                var detailData = $.map(performanceData[args.point.x][1]["0"], function(item, index) {
+
+
+                                        return item.Val
+                                    }),
+
+                                    detailChartElement = $("#detailChart"),
+                                    detailChart = detailChartElement.swidget(),
+                                    initialOptions = detailChart.initialOptions,
+                                    headerText ="<b>"+performanceData[args.point.name][1][0][0].Number + " Details</b>";
+
+                                detailChart.destroy();
+                                detailChartElement.shieldChart($.extend(initialOptions, {
+                                    primaryHeader: {
+                                        text: headerText
+                                    },
+                                    tooltipSettings: {
+                                        customPointText: (performanceData[args.point.x][1], function(item, index) {
+                                            console.log("?????", performanceData[args.point.x][1][0][item.pointName])
+                                            return "<span><b>Number :" + performanceData[args.point.x][1][0][item.pointName].Number + " |<br>SMS :" + performanceData[args.point.x][1][0][item.pointName].SMS + "<br/>| Type :" + performanceData[args.point.x][1][0][item.pointName].SMS_Type + " | Time :" + performanceData[args.point.x][1][0][item.pointName].Date + "</b></span>";
+                                        })
+                                    },
+                                    dataSeries: [{
+                                        seriesType: "line",
+                                        collectionAlias: "Number",
+                                        data: detailData
+                                    }]
+                                }));
+                            }
+                        }
+                    });
+                    $("#detailChart").shieldChart({
+                        exportOptions: {
+                            image: false,
+                            print: false
+                        },
+                        axisY: {
+                            title: {
+                                text: "Time"
+                            }
+                        },
+
+
+
+                        primaryHeader: {
+                            text: "<b><font color='red'>"+performanceData[0][1][0][0].Number+"</font></b> <b>Details</b>"
+                        },
+                                  tooltipSettings: {
+                                        customPointText: (performanceData, function(item, index) {
+                                            console.log("?????", performanceData[0][1][0][0])
+                                            return "<span><b>Number :" + performanceData[0][1][0][0].Number + " |<br>SMS :" + performanceData[0][1][0][0].SMS + "<br/>| Type :" + performanceData[0][1][0][0].SMS_Type + " | Time :" + performanceData[0][1][0][0].Date + "</b></span>";
+                                        })
+                                    },
+
+                        dataSeries: [{
+                            seriesType: "line",
+                            collectionAlias: "Number",
+                            data: $.map(performanceData[0][1], function(item, index) {
+                                console.log(",,,,,,,", item)
+                                var arr = []
+                                for (i = 0; i < item.length; i++) {
+                                    arr.push(item[i].Val)
+                                }
+                                return arr
+                            })
+
+                        }]
+                    });
+
+
+                });
+            });});
+        </script>
+        <!-- Simple Dashboard - END -->
+
+</div>
+
+</body>
+</html>
