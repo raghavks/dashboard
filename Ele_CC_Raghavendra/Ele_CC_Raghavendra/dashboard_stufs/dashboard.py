@@ -63,7 +63,7 @@ def sms_type(single_dict):
     :return: 
     """
     s_type = None
-    if re.search(r'Our team wishes you|visit your|http|discount|voucher|valid|promo|offers|off|sms|coupon', single_dict['text'], re.IGNORECASE):
+    if re.search(r'Our team wishes you|visit your|discount|voucher|valid|promo|offers|off|sms|coupon', single_dict['text'], re.IGNORECASE):
             # s = datetime.strptime('9:00', '%H:%M')
             # e = datetime.strptime('21:00', '%H:%M')
             # obj=parser.parse(single_dict['datetime'])
