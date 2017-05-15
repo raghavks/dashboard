@@ -10,6 +10,7 @@ def read_json():
     :return: json data
     """
     jsonfolder = open('Ele_CC_Raghavendra/static/json/SMSBackUp.json', 'r',encoding = 'utf-8')
+    #jsonfolder = open('/home/raghav/assignment/Ele_CC_Raghavendra/Ele_CC_Raghavendra/static/json/SMSBackUp.json', 'r', encoding='utf-8')
     content = jsonfolder.read()
     content = json.loads(content)
     jsonfolder.close()
@@ -62,7 +63,7 @@ def sms_type(single_dict):
     :return: 
     """
     s_type = None
-    if re.search(r'Our team wishes you|http|discount|voucher|valid|promo|offers|off|sms|coupon', single_dict['text'], re.IGNORECASE):
+    if re.search(r'Our team wishes you|visit your|http|discount|voucher|valid|promo|offers|off|sms|coupon', single_dict['text'], re.IGNORECASE):
             # s = datetime.strptime('9:00', '%H:%M')
             # e = datetime.strptime('21:00', '%H:%M')
             # obj=parser.parse(single_dict['datetime'])
@@ -77,6 +78,8 @@ def sms_type(single_dict):
         s_type = "Tx SMS"
     return s_type
 
+def sort_list(item):
+    return(item[0]['Total_SMS'])
 
 def service_sms_type():
     """
@@ -115,5 +118,7 @@ def service_sms_type():
         res_dict = {"Id": m_id, "Number": number, "Type": s_type, "Total_SMS": total, "Promotional": pcount, "TxSMS": tcount}
         m_id = m_id+1
         allresult.append([res_dict, status_global])
-
-    return allresult
+    return sorted(allresult,key=sort_list)
+if __name__ == '__main__':
+    for i in service_sms_type():
+        print(i[0]['Total_SMS'])
